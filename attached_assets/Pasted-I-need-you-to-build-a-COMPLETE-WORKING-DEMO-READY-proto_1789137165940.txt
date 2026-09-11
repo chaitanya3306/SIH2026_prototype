@@ -1,0 +1,1114 @@
+I need you to build a COMPLETE, WORKING, DEMO-READY prototype for a Smart India Hackathon 2026 problem statement.
+
+You are acting as:
+1. Senior full-stack engineer
+2. UI/UX designer
+3. Backend architect
+4. Database engineer
+5. Product designer
+
+IMPORTANT:
+Do NOT create only a UI mockup.
+I need a genuinely functional full-stack prototype where frontend, backend and database are connected and the main user journeys actually work.
+
+This is a DEMONSTRATION PROTOTYPE for SIH selection.
+Prioritize:
+- working end-to-end flows
+- clean professional UI
+- realistic sample data
+- understandable architecture
+- reliable demo experience
+- easy explanation during judging
+
+Do NOT over-engineer the application.
+
+==================================================
+PROJECT
+==================================================
+
+Project title:
+
+Unified Online Verification & Lifecycle Management System for Weighing and Measuring Instruments
+
+Core idea:
+
+Every legally regulated weighing/measuring instrument gets a persistent digital identity, called a DIGITAL INSTRUMENT PASSPORT.
+
+The platform manages the complete lifecycle:
+
+Registration
+→ Verification Application
+→ Officer/GATC Assignment
+→ Scheduling
+→ Field Verification
+→ Digital Certificate
+→ QR Verification
+→ Expiry Monitoring
+→ Re-verification
+→ Audit / Enforcement
+
+The system should support multiple instrument categories:
+
+- Weighing Scales
+- Platform Scales
+- Weighbridges
+- Petrol/Diesel Fuel Dispensers
+- LPG/CNG/LNG Dispensers
+- Other configurable measuring instruments
+
+IMPORTANT:
+Do not claim that all instrument categories have identical legal verification procedures.
+This software manages configurable workflows and records verification results entered by authorized users.
+
+==================================================
+TECH STACK
+==================================================
+
+Use this stack unless technically impossible:
+
+FRONTEND:
+- React
+- Vite
+- Tailwind CSS
+
+BACKEND:
+- Python
+- FastAPI
+
+DATABASE:
+- PostgreSQL
+
+ORM:
+- SQLAlchemy
+
+VALIDATION:
+- Pydantic
+
+AUTH:
+- JWT
+- Role-Based Access Control
+
+FILE HANDLING:
+- Local/object-style storage appropriate for prototype
+
+QR:
+- QR code generation
+
+PDF:
+- Digital verification certificate PDF generation
+
+TESTING:
+- Basic backend/API tests where practical
+
+IMPORTANT:
+Keep frontend and backend clearly separated.
+
+The frontend must communicate with FastAPI through REST APIs.
+
+Do not replace FastAPI with Node.js or another backend framework.
+
+==================================================
+USER ROLES
+==================================================
+
+Implement these roles:
+
+1. BUSINESS
+2. LMO
+3. GATC
+4. ADMIN
+5. PUBLIC
+
+Permissions:
+
+BUSINESS:
+- Login
+- Register instruments
+- View own instruments
+- Submit verification applications
+- Track applications
+- View certificates
+- Receive expiry information
+
+LMO:
+- Login
+- View assigned verification applications
+- View instrument details
+- Perform field verification
+- Enter inspection observations
+- Upload inspection photos
+- Capture GPS coordinates
+- PASS / FAIL verification
+- View verification history
+
+GATC:
+- Similar verification workflow for applications assigned to GATC
+
+ADMIN:
+- View all instruments
+- View all applications
+- Assign LMO/GATC
+- Schedule verification
+- Monitor pendency
+- Monitor expired/expiring instruments
+- View complaints
+- View audit logs
+- View dashboard analytics
+
+PUBLIC:
+- No login
+- Scan/search certificate
+- View public verification information
+- Report an issue
+
+==================================================
+CORE DATABASE ENTITIES
+==================================================
+
+Create a clean relational schema using PostgreSQL.
+
+Minimum entities:
+
+User
+Instrument
+Application
+Verification
+Certificate
+Document
+InspectionPhoto
+Complaint
+Notification
+AuditLog
+
+Use proper foreign keys and relationships.
+
+Important relationships:
+
+User 1 → many Instruments
+
+Instrument 1 → many Applications
+
+Application 1 → one or many Verification records depending on design
+
+Verification → Certificate when successful
+
+Application → Documents
+
+Verification → InspectionPhotos
+
+Instrument → Complaints
+
+User → Notifications
+
+All important actions → AuditLog
+
+Use UUIDs or another sensible identifier strategy.
+
+Do not create unnecessary tables.
+
+==================================================
+INSTRUMENT
+==================================================
+
+Each instrument must have:
+
+- unique instrument ID
+- instrument code
+- instrument type
+- manufacturer
+- model
+- serial number
+- capacity/range
+- fuel type when applicable
+- owner
+- location
+- status
+- created date
+- last verification
+- next due date
+
+Example:
+
+Instrument ID:
+FD-MH-PUN-0001
+
+Type:
+Fuel Dispenser
+
+Manufacturer:
+XYZ
+
+Model:
+FD-2000
+
+Serial:
+P12345
+
+Location:
+Pune
+
+Status:
+VERIFIED
+
+==================================================
+INSTRUMENT STATUS
+==================================================
+
+Support these states:
+
+REGISTERED
+APPLICATION_SUBMITTED
+SCHEDULED
+UNDER_VERIFICATION
+VERIFIED
+REJECTED
+EXPIRED
+SUSPENDED
+RETIRED
+
+Prevent obviously invalid transitions.
+
+Example:
+
+An instrument cannot directly change from REGISTERED to VERIFIED without a verification workflow.
+
+==================================================
+APPLICATION
+==================================================
+
+Application should contain:
+
+- application ID
+- instrument
+- applicant
+- application type
+- status
+- submitted date
+- scheduled date
+- assigned officer/GATC
+- priority
+- remarks
+
+Application types:
+
+INITIAL_VERIFICATION
+RE_VERIFICATION
+
+==================================================
+VERIFICATION
+==================================================
+
+Verification record should contain:
+
+- verification ID
+- application
+- officer/GATC
+- date/time
+- result
+- remarks
+- GPS latitude
+- GPS longitude
+- inspection observations
+- evidence/photos
+
+Result:
+
+PASS
+FAIL
+
+Use realistic demo checklist fields.
+
+IMPORTANT:
+Do not pretend the software is physically measuring legal accuracy.
+It only records the authorized verifier's observations and result.
+
+==================================================
+CERTIFICATE
+==================================================
+
+When verification result is PASS:
+
+Automatically create a digital verification certificate containing:
+
+- certificate number
+- instrument ID
+- instrument type
+- manufacturer
+- model
+- serial number
+- verification date
+- valid until
+- verification result
+- issuing officer/GATC
+- QR code
+
+Generate a downloadable PDF.
+
+Certificate status:
+
+ACTIVE
+EXPIRED
+REVOKED
+
+==================================================
+QR VERIFICATION
+==================================================
+
+QR must NOT simply be a decorative QR image.
+
+Generate a QR that points to a public route such as:
+
+/verify/{certificate_number}
+
+Public user scans QR and sees:
+
+- Instrument type
+- Instrument ID
+- Certificate number
+- Verification date
+- Valid until
+- Current status
+- Authenticity/validity indication
+
+Do not expose private owner information.
+
+Example public result:
+
+VERIFIED ✓
+
+Fuel Dispenser
+
+Instrument ID:
+FD-MH-PUN-0001
+
+Certificate:
+CERT-2026-001
+
+Verified:
+15 Sep 2026
+
+Valid Until:
+15 Sep 2027
+
+Status:
+ACTIVE
+
+==================================================
+PUBLIC ISSUE REPORTING
+==================================================
+
+On the public verification page add:
+
+[ REPORT AN ISSUE ]
+
+Allow:
+
+- issue category
+- description
+- optional photo
+- location
+- timestamp
+
+Create a Complaint record.
+
+Possible issue categories:
+
+- Certificate expired
+- Instrument appears damaged
+- Suspected mismatch
+- QR problem
+- Other
+
+==================================================
+FIELD VERIFICATION
+==================================================
+
+Create a realistic mobile-friendly verification interface for LMO/GATC.
+
+Workflow:
+
+Login
+→ Assigned Applications
+→ Open Application
+→ View Instrument
+→ Start Verification
+→ Inspection Checklist
+→ Add observations
+→ Capture GPS
+→ Upload photo
+→ PASS / FAIL
+→ Submit
+
+Use a clear step-based UI.
+
+If possible, simulate offline support at prototype level:
+allow the user to save an inspection locally and synchronize later.
+
+Do not build an unnecessarily complicated offline engine.
+
+==================================================
+SMART ASSIGNMENT
+==================================================
+
+Implement a simple deterministic scoring mechanism for officer/GATC recommendation.
+
+Inputs:
+
+- distance
+- workload
+- instrument category
+- availability
+- priority
+
+Output:
+
+Recommended officer/GATC
+
+Example:
+
+Recommended:
+LMO-023
+
+Reasons:
+Nearest
+Lowest workload
+Compatible instrument category
+
+This can be rule-based.
+
+Do NOT use machine learning for this first prototype.
+
+==================================================
+RISK SCORE
+==================================================
+
+Add a prototype risk scoring feature.
+
+It should be explainable and rule-based.
+
+Example inputs:
+
+- verification expired
+- verification expiring soon
+- previous failures
+- number of complaints
+- repeated re-verification
+- unusual verification pattern
+
+Output:
+
+Risk score 0–100
+
+Risk categories:
+
+LOW
+MEDIUM
+HIGH
+
+Example:
+
+Risk Score: 82
+
+HIGH RISK
+
+Reasons:
+- Previous failed verification
+- Multiple complaints
+- Verification overdue
+
+The score is only decision support.
+It does not automatically make a legal enforcement decision.
+
+==================================================
+EXPIRY MONITORING
+==================================================
+
+Admin dashboard should identify:
+
+- verified
+- expiring soon
+- expired
+- pending verification
+
+Add simulated alerts.
+
+Examples:
+
+"Certificate expires in 30 days"
+
+"Certificate expires in 7 days"
+
+"Certificate expired"
+
+Do not require real email/SMS integration for the prototype.
+In-app notifications are sufficient.
+
+==================================================
+AUDIT LOG
+==================================================
+
+Record important actions:
+
+- user registered
+- instrument created
+- application submitted
+- officer assigned
+- verification completed
+- certificate issued
+- certificate viewed
+- complaint submitted
+- status changed
+
+Audit log fields:
+
+- actor
+- action
+- entity
+- entity ID
+- timestamp
+
+Display these to admin.
+
+==================================================
+API DESIGN
+==================================================
+
+Create versioned REST APIs such as:
+
+/api/v1/auth/...
+
+/api/v1/instruments/...
+
+/api/v1/applications/...
+
+/api/v1/verifications/...
+
+/api/v1/certificates/...
+
+/api/v1/complaints/...
+
+/api/v1/admin/...
+
+/api/v1/public/...
+
+Use proper HTTP methods:
+
+GET
+POST
+PATCH
+DELETE
+
+Use appropriate status codes.
+
+Use Pydantic request/response schemas.
+
+Keep business logic separate from route definitions where practical.
+
+==================================================
+FRONTEND PAGES
+==================================================
+
+Create polished responsive pages for:
+
+1. Landing Page
+
+2. Login
+
+3. Business Dashboard
+
+4. Instrument Management
+
+5. Register Instrument
+
+6. Verification Application
+
+7. Application Tracking
+
+8. LMO Dashboard
+
+9. Verification Workspace
+
+10. Certificate View
+
+11. Public QR Verification Page
+
+12. Admin Dashboard
+
+13. Complaint Management
+
+14. Audit Logs
+
+15. Notifications
+
+==================================================
+LANDING PAGE
+==================================================
+
+Create a professional government-technology landing page.
+
+Headline:
+
+"Trusted Digital Verification for Every Measuring Instrument"
+
+Subtitle:
+
+"One digital identity, complete verification lifecycle and transparent certificate status."
+
+Show 3 major feature cards:
+
+DIGITAL INSTRUMENT PASSPORT
+SECURE QR VERIFICATION
+FIELD-FIRST VERIFICATION
+
+Show supported examples:
+
+Weighing Scale
+Weighbridge
+Fuel Dispenser
+
+Include:
+
+[Business Login]
+[Officer Login]
+[Verify Certificate]
+
+==================================================
+BUSINESS DASHBOARD
+==================================================
+
+Show:
+
+Total Instruments
+Verified
+Pending
+Expiring Soon
+Expired
+
+Create a recent applications table.
+
+Actions:
+
+Register Instrument
+Apply for Verification
+View Certificate
+
+==================================================
+LMO DASHBOARD
+==================================================
+
+Show:
+
+Today's Inspections
+Pending Assignments
+Completed
+Failed
+Priority Cases
+
+Create inspection cards with:
+
+Business
+Instrument
+Location
+Scheduled time
+Status
+
+Button:
+
+[Start Verification]
+
+==================================================
+ADMIN DASHBOARD
+==================================================
+
+Make this visually strong because it will be used in the SIH demo.
+
+Show:
+
+Total Instruments
+
+Verified
+
+Pending Applications
+
+Expiring Soon
+
+Expired
+
+Complaints
+
+High-Risk Instruments
+
+Add charts:
+
+- instruments by type
+- application status
+- verification outcomes
+- expiry distribution
+
+Use realistic seeded data.
+
+==================================================
+PUBLIC VERIFICATION PAGE
+==================================================
+
+Make this extremely simple.
+
+Top:
+
+✓ VERIFIED
+
+Then:
+
+Instrument
+
+Instrument ID
+
+Certificate Number
+
+Verification Date
+
+Valid Until
+
+Status
+
+[View Certificate]
+
+[Report an Issue]
+
+Use trust/security visual language.
+
+==================================================
+SAMPLE DEMO DATA
+==================================================
+
+Seed realistic demo data.
+
+Create at least:
+
+10–20 instruments
+
+10 applications
+
+several verification records
+
+several certificates
+
+some expiring instruments
+
+some expired instruments
+
+several users with different roles
+
+several complaints
+
+some high-risk instruments
+
+Include different instrument types:
+
+weighing scale
+
+weighbridge
+
+fuel dispenser
+
+LPG/CNG dispenser
+
+The seeded data should make the dashboards look realistic.
+
+==================================================
+DEMO SCENARIO
+==================================================
+
+The system must support this complete end-to-end demo:
+
+BUSINESS LOGIN
+
+↓
+
+Register a fuel dispenser
+
+↓
+
+Submit re-verification application
+
+↓
+
+Application appears in admin dashboard
+
+↓
+
+Admin assigns an LMO
+
+↓
+
+LMO sees assignment
+
+↓
+
+LMO opens mobile verification interface
+
+↓
+
+Records inspection observations
+
+↓
+
+Captures GPS
+
+↓
+
+Uploads a photo
+
+↓
+
+Selects PASS
+
+↓
+
+Backend creates verification record
+
+↓
+
+Backend generates digital certificate
+
+↓
+
+Certificate receives QR code
+
+↓
+
+Business sees certificate
+
+↓
+
+Open public verification page
+
+↓
+
+Show:
+
+✓ VERIFIED
+
+↓
+
+Admin dashboard updates statistics
+
+Also demonstrate:
+
+An expired certificate
+
+An upcoming expiry
+
+A complaint
+
+A high-risk instrument
+
+A smart officer recommendation
+
+==================================================
+UI DESIGN
+==================================================
+
+The UI must look like a serious government technology product.
+
+Style:
+
+- white/light background
+- dark navy headings
+- blue and green primary colors
+- yellow warning
+- red risk/failure states
+- clean rounded cards
+- thin borders
+- subtle shadows
+- professional icons
+- excellent spacing
+- responsive design
+
+Avoid:
+
+- neon
+- cyberpunk
+- excessive gradients
+- gaming aesthetics
+- cartoonish design
+- generic startup landing pages
+
+Use a clean dashboard system.
+
+==================================================
+DEMO-FIRST REQUIREMENT
+==================================================
+
+This is a prototype for SIH selection.
+
+Therefore prioritize the following:
+
+1. The main demo workflow must work perfectly.
+2. Seed data must make the system look alive.
+3. Navigation must be simple.
+4. Buttons must actually perform actions.
+5. No broken routes.
+6. No placeholder buttons unless clearly marked.
+7. No fake loading forever.
+8. No dead pages.
+9. Backend and frontend must actually communicate.
+10. Database persistence must work.
+11. Refreshing the page should preserve data.
+
+==================================================
+IMPORTANT ARCHITECTURE REQUIREMENT
+==================================================
+
+Keep the backend understandable.
+
+Use a structure that separates:
+
+- routers
+- schemas
+- models
+- services
+- database
+- authentication
+
+Do not put the entire backend in one file.
+
+Do not create dozens of unnecessary microservices.
+
+This is a modular monolith prototype.
+
+==================================================
+SECURITY
+==================================================
+
+Implement basic practical security:
+
+- password hashing
+- JWT authentication
+- role-based access control
+- environment variables for secrets
+- CORS configuration
+- validation
+- secure file handling
+- no passwords in logs
+- no sensitive private information on public verification
+
+==================================================
+README
+==================================================
+
+Create a README containing:
+
+Project overview
+
+Features
+
+Architecture
+
+Tech stack
+
+How to run frontend
+
+How to run backend
+
+How to configure database
+
+Demo credentials
+
+API documentation
+
+Database setup
+
+Known prototype limitations
+
+Future production improvements
+
+==================================================
+DEMO CREDENTIALS
+==================================================
+
+Create simple demo users.
+
+Business:
+business@example.com
+Password:
+Demo@123
+
+LMO:
+lmo@example.com
+Password:
+Demo@123
+
+GATC:
+gatc@example.com
+Password:
+Demo@123
+
+Admin:
+admin@example.com
+Password:
+Demo@123
+
+Make sure these accounts actually work.
+
+==================================================
+IMPORTANT PRODUCT POSITIONING
+==================================================
+
+The project must NOT claim:
+
+"Existing systems do not exist."
+
+Instead position it as:
+
+"An instrument-centric lifecycle and intelligence layer that unifies registration, verification, field operations, certificate authenticity, public verification and enforcement monitoring."
+
+Core concept:
+
+DIGITAL INSTRUMENT PASSPORT
+
+Positioning statement:
+
+"From application-centric verification to instrument-centric lifecycle management."
+
+==================================================
+FINAL REQUIREMENT
+==================================================
+
+Build the application completely.
+
+After building:
+
+1. Run the backend.
+2. Run the frontend.
+3. Test the database.
+4. Test authentication.
+5. Test the main business workflow.
+6. Test LMO workflow.
+7. Test certificate generation.
+8. Test public QR verification.
+9. Test dashboard updates.
+10. Fix errors before considering the project complete.
+
+Do not stop after creating the UI.
+
+I need a FUNCTIONAL, DEMO-READY FULL-STACK PROTOTYPE.
+
+When finished, provide:
+
+1. Application URL
+2. Demo credentials
+3. How to run locally
+4. Architecture summary
+5. Main API endpoints
+6. Database entities
+7. Exact demo flow I should follow during SIH presentation
+8. Known limitations
+9. Recommended next improvements
+
+Do not replace FastAPI with another backend framework.
+Do not replace PostgreSQL with a document database.
+Do not implement unnecessary blockchain.
+Do not make AI the central feature.
+
+The final prototype should feel like a serious government technology platform and should be easy for an SIH judge to understand in a 3–5 minute live demonstration.

@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Instrument Passport"
+description = "A demo-ready government technology platform for instrument registration, verification workflows, digital certificates, public QR authenticity checks, and lifecycle intelligence."
+version = "1.0.0"
+id = "artifacts/instrument-passport"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25781
+
+[services.development]
+run = "pnpm --filter @workspace/instrument-passport run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/instrument-passport", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/instrument-passport/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25781"
+BASE_PATH = "/"
