@@ -1,0 +1,13 @@
+[build]
+  command = "pnpm --filter @workspace/instrument-passport run build"
+  publish = "artifacts/instrument-passport/dist/public"
+
+[build.environment]
+  NODE_VERSION = "22"
+  BASE_PATH = "/"
+
+# Single-page app: let the client-side router handle every path
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
